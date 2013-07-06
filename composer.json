@@ -1,0 +1,21 @@
+{
+    "name": "cwm/hypo",
+    "description": "Dependency Injection Container for PHP",
+    "version": "0.1.0",
+    "minimum-stability": "dev",
+    "requires": {
+        "php": ">=5.4.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-0": {
+            "CWM\\Hypo\\": "lib/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Chase Miller",
+            "email": "chase@bawxen.net"
+        }
+    ]
+}
