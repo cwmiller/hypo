@@ -23,26 +23,29 @@
 
 namespace CWM\Hypo\Registration\Traits;
 
-use CWM\Hypo\Registration\FourthStep;
+use CWM\Hypo\Registration\NameStep;
 use CWM\Hypo\Registration;
 
+/**
+ * @package CWM\Hypo\Registration\Traits
+ */
 trait LifeSpan {
 	/**
-	 * @return FourthStep
+	 * @return NameStep
 	 */
 	public function AsSingleton() {
 		$this->getRegistration()->isSingleton(true);
 
-		return new FourthStep($this->getRegistration());
+		return new NameStep($this->getRegistration());
 	}
 
 	/**
-	 * @return FourthStep
+	 * @return NameStep
 	 */
 	public function AsTransient() {
 		$this->getRegistration()->isSingleton(false);
 
-		return new FourthStep($this->getRegistration());
+		return new NameStep($this->getRegistration());
 	}
 
 	/**

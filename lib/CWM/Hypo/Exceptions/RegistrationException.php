@@ -21,10 +21,32 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Exceptions;
 
-use CWM\Hypo\Registration\Traits\Name;
+use CWM\Hypo\Registration;
+use \Exception;
 
-class FourthStep extends Step {
-	use Name;
+/**
+ * @package CWM\Hypo\Exceptions
+ */
+class RegistrationException extends Exception {
+	/** @var Registration $_registration */
+	protected $_registration;
+
+	/**
+	 * @param Registration $registration
+	 * @param int $message
+	 * @param int $code
+	 * @param $previous
+	 */
+	public function __construct(Registration $registration, $message, $code = 0, $previous = null) {
+		parent::__construct($message, $code, $previous);
+	}
+
+	/**
+	 * @return Registration
+	 */
+	public function getRegistration() {
+		return $this->_registration;
+	}
 }

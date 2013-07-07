@@ -23,10 +23,14 @@
 
 namespace CWM\Hypo\Registration;
 
-use CWM\Hypo\Registration\Traits\LifeSpan;
 use CWM\Hypo\Registration\Traits\Name;
-use CWM\Hypo\Registration\Traits\Parameters;
 
-class SecondStep extends Step {
-	use Parameters, LifeSpan, Name;
+/**
+ * Final step in the registration fluent API. This step follows the lifespan step is for configuring
+ * an optional name for the registration.
+ *
+ * @package CWM\Hypo\Registration
+ */
+class NameStep extends Step {
+	use Name;
 }

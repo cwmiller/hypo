@@ -23,16 +23,21 @@
 
 namespace CWM\Hypo;
 
-use CWM\Hypo\Registration\FirstStep;
+use CWM\Hypo\Registration\ResolutionStep;
 
+/**
+ * @package CWM\Hypo
+ */
 interface IContainer {
 	/**
+	 * @abstract
 	 * @param string $type
-	 * @return FirstStep
+	 * @return ResolutionStep
 	 */
 	public function register($type);
 
 	/**
+	 * @abstract
 	 * @param string $service
 	 * @return object|null
 	 */

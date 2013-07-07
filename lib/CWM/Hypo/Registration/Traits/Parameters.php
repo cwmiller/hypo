@@ -23,18 +23,21 @@
 
 namespace CWM\Hypo\Registration\Traits;
 
-use CWM\Hypo\Registration\ThirdStep;
+use CWM\Hypo\Registration\LifeSpanStep;
 use CWM\Hypo\Registration;
 
+/**
+ * @package CWM\Hypo\Registration\Traits
+ */
 trait Parameters {
 	/**
 	 * @param $parameters
-	 * @return ThirdStep
+	 * @return LifeSpanStep
 	 */
 	public function withParameters($parameters) {
 		$this->getRegistration()->addParameters($parameters);
 
-		return new ThirdStep($this->_registration);
+		return new LifeSpanStep($this->getRegistration());
 	}
 
 	/**

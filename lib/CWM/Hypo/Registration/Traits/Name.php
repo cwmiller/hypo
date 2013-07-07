@@ -25,6 +25,9 @@ namespace CWM\Hypo\Registration\Traits;
 
 use CWM\Hypo\Registration;
 
+/**
+ * @package CWM\Hypo\Registration\Traits
+ */
 trait Name {
 	/**
 	 * @param string $name

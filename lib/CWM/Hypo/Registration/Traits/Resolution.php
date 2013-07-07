@@ -23,32 +23,70 @@
 
 namespace CWM\Hypo\Registration\Traits;
 
-use CWM\Hypo\Registration\SecondStep;
-use CWM\Hypo\Registration\ThirdStep;
+use CWM\Hypo\Registration\ParameterStep;
+use CWM\Hypo\Registration\LifeSpanStep;
 use CWM\Hypo\Registration;
+use CWM\Hypo\Exceptions\RegistrationException;
+use \ReflectionClass;
 
+/**
+ * @package CWM\Hypo\Registration\Traits
+ */
 trait Resolution {
 	/**
-	 * @return ThirdStep
+	 * @return LifeSpanStep
 	 */
-	public function asImplementedInterfaces() {
-		$this->getRegistration()->addInterfacesAsServices();
+	public function withImplementedInterfaces() {
+		$registration = $this->getRegistration();
+		$implemenation = $registration->getImplementation();
 
-		return new SecondStep($this->getRegistration());
+		if (class_exists($implemenation)) {
+			$clazz = new ReflectionClass($implemenation);
+			$interfaces = $clazz->getInterfaceNames();
+
+			foreach ($interfaces as $interface) {
+				$this->with($interface);
+			}
+		}
+
+		return new ParameterStep($registration);
 	}
 
 	/**
-	 * @param array|string $type
-	 * @return ThirdStep
+	 * @param array|string $services
+	 * @return LifeSpanStep
+	 * @throws RegistrationException
 	 */
-	public function asType($type) {
-		if (!is_array($type)) {
-			$type = array($type);
+	public function with($services) {
+		$registration = $this->getRegistration();
+		$clazz = new ReflectionClass($registration->getImplementation());
+
+		if (!is_array($services)) {
+			$services = array($services);
 		}
 
-		$this->getRegistration()->addServices(array($type));
+		foreach ($services as $service) {
+			// Make sure service is compatible with implementation
+			$service_clazz = new ReflectionClass($service);
 
-		return new SecondStep($this->getRegistration());
+			if ($service_clazz->getName() != $clazz->getName()) {
+				if ($service_clazz->isInterface()) {
+					if (!$clazz->implementsInterface($service_clazz)) {
+						$message = sprintf('Interface %s is incompatible with class %s.', $service_clazz->getName(), $clazz->getName());
+
+						throw new RegistrationException($registration, $message);
+					}
+				} else if (!$clazz->isSubclassOf($service_clazz)) {
+					$message = sprintf('Class %s is incompatible with class %s.', $service_clazz->getName(), $clazz->getName());
+
+					throw new RegistrationException($registration, $message);
+				}
+			}
+
+			$registration->addService($service);
+		}
+
+		return new ParameterStep($registration);
 	}
 
 	/**

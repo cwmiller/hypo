@@ -25,8 +25,12 @@ namespace CWM\Hypo;
 
 use CWM\Hypo\Registration\NamedDependency;
 use CWM\Hypo\Registration;
-use CWM\Hypo\Registration\FirstStep;
+use CWM\Hypo\Registration\ResolutionStep;
 
+/**
+ * Class Container
+ * @package CWM\Hypo
+ */
 class Container implements IContainer {
 	/**
 	 * @var Registration[] $_registrations
@@ -44,7 +48,7 @@ class Container implements IContainer {
 	 *	->asSingleton()
 	 *
 	 * @param string $type Class name to register
-	 * @return FirstStep
+	 * @return ResolutionStep
 	 */
 	public function register($type) {
 		// Start with a clean registration.
@@ -57,7 +61,7 @@ class Container implements IContainer {
 		$this->_registrations []= $registration;
 
 		// Continue the fluent API
-		return new FirstStep($registration);
+		return new ResolutionStep($registration);
 	}
 
 	/**
@@ -76,6 +80,7 @@ class Container implements IContainer {
 			// If the requested service is found, return an instance of the configured implementation.
 			if (in_array($service, $services)) {
 				$instance = $this->resolveRegistration($registration);
+				// Prevent any further searching
 				break;
 			}
 		}
@@ -97,9 +102,12 @@ class Container implements IContainer {
 	public function resolveByName($name) {
 		$instance = NULL;
 
+		// Search all registrations for one that matches $name
 		foreach ($this->_registrations as $registration) {
 			if ($registration->getName() == $name) {
 				$instance = $this->resolveRegistration($registration);
+				// Prevent any further searching
+				break;
 			}
 		}
 
@@ -107,36 +115,49 @@ class Container implements IContainer {
 	}
 
 	/**
+	 * Resolves a Registration object
+	 *
 	 * @param Registration $registration
 	 * @return object
 	 */
 	protected function resolveRegistration(Registration $registration) {
+		// Registrations hold instances of singletons, so check that first
 		if (!is_null($registration->getInstance())) {
 			return $registration->getInstance();
 		} else {
+			// Get the name of the class to be constructed
 			$className = $registration->getImplementation();
+
+			// Get the named parameters to be passed to the constructor
 			$configured_params = $registration->getParameters();
 
+			// Reflect the class to be constructed to get information on the constructor
 			$clazz = new \ReflectionClass($className);
 			$constructor = $clazz->getConstructor();
+
+			// Associative array for housing named parameters to be passed to the constructor
 			$params_for_construction = array();
 
 			if (!is_null($constructor)) {
 				if ($constructor->getNumberOfParameters() > 0) {
+					// Get details on each parameter in the constructor
 					$params = $constructor->getParameters();
 
 					foreach ($params as $param) {
 						$value = NULL;
 
+						// Check the parameter name against the configured parameter listing.
 						if (array_key_exists($param->getName(), $configured_params)) {
+							// The value can be anything, but if it's an instance of NamedDependency, then
+							// the value must be resolved using the container.
 							$value = $configured_params[$param->getName()];
 
-							// If NamedDependency, resolve it
 							if ($value instanceof NamedDependency) {
 								$value = $this->resolveByName($value->getName());
 							}
-
 						} else {
+							// If the parameter is not explicitly configured, but is a class, then it will be resolved
+							// using the container.
 							$param_clazz = $param->getClass();
 
 							if (!is_null($param_clazz)) {
@@ -152,8 +173,10 @@ class Container implements IContainer {
 				}
 			}
 
+			// Constructor the implementation.
 			$instance = $clazz->newInstanceArgs($params_for_construction);
 
+			// If a singleton, store the instance. It'll be served to any further requests for this service.
 			if ($registration->isSingleton()) {
 				$registration->setInstance($instance);
 			}

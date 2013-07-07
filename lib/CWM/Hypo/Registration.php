@@ -25,6 +25,11 @@ namespace CWM\Hypo;
 
 use \ReflectionClass;
 
+/**
+ * Data model for a single registration's configuration.
+ *
+ * @package CWM\Hypo
+ */
 class Registration {
 	/**
 	 * @var array
@@ -80,13 +85,11 @@ class Registration {
 	}
 
 	/**
-	 * @param array $types
+	 * @param string $service
 	 * @return $this
 	 */
-	public function addServices(array $types) {
-		foreach ($types as $service) {
-			$this->_services []= $service;
-		}
+	public function addService($service) {
+		$this->_services []= $service;
 
 		return $this;
 	}
@@ -96,20 +99,6 @@ class Registration {
 	 */
 	public function getServices() {
 		return $this->_services;
-	}
-
-	/**
-	 * @return $this
-	 */
-	public function addInterfacesAsServices() {
-		if (class_exists($this->_implementation)) {
-			$clazz = new ReflectionClass($this->_implementation);
-			$interfaces = $clazz->getInterfaceNames();
-
-			$this->addServices($interfaces);
-		}
-
-		return $this;
 	}
 
 	/**

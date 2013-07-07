@@ -25,6 +25,11 @@ namespace CWM\Hypo\Registration;
 
 use CWM\Hypo\Registration;
 
+/**
+ * Base class for all steps in the fluent API.
+ *
+ * @package CWM\Hypo\Registration
+ */
 abstract class Step {
 	/**
 	 * @var Registration $_registration;

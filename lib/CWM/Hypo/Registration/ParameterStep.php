@@ -24,15 +24,15 @@
 namespace CWM\Hypo\Registration;
 
 use CWM\Hypo\Registration\Traits\LifeSpan;
-use CWM\Hypo\Registration\Traits\Resolution;
-use CWM\Hypo\Registration\Traits\Parameters;
 use CWM\Hypo\Registration\Traits\Name;
-use CWM\Hypo\Registration;
+use CWM\Hypo\Registration\Traits\Parameters;
 
-class FirstStep extends Step {
-	use LifeSpan, Resolution, Parameters, Name;
-
-	public function __construct(Registration $registration) {
-		parent::__construct($registration);
-	}
+/**
+ * Second step in the registration fluent API. This step follows resolution and is for configuring parameters
+ * to be passed to the implemenation's constructor.
+ *
+ * @package CWM\Hypo\Registration
+ */
+class ParameterStep extends Step {
+	use Parameters, LifeSpan, Name;
 }

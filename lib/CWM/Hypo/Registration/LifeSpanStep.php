@@ -23,26 +23,14 @@
 
 namespace CWM\Hypo\Registration;
 
+use CWM\Hypo\Registration\Traits\LifeSpan;
+use CWM\Hypo\Registration\Traits\Name;
+
 /**
+ * Third step in the registration fluent API. This step follows the parameters step and is for configuring
+ * the lifespan of the implemenation.
  * @package CWM\Hypo\Registration
  */
-class NamedDependency {
-	/**
-	 * @var string $_name;
-	 */
-	private $_name;
-
-	/**
-	 * @param string $name
-	 */
-	public function __construct($name) {
-		$this->_name = $name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->_name;
-	}
+class LifeSpanStep extends Step {
+	use LifeSpan, Name;
 }
