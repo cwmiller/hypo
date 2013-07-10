@@ -11,7 +11,6 @@ Hypo is a Dependency Injection container for PHP 5.4+. It provides a simple, flu
 
 ### Registering a Class
 
-Code:
     class Crypt {
         public function crypt($password) {
             return md5($password);
@@ -20,14 +19,12 @@ Code:
 
     $container = new Container();
     $container->register('Crypt');
+
     $crypt = $container->resolve('Crypt');
     echo $crypt->crypt('testing');
 
-Output:
-    ae2b1fca515949e5d54fb22b8ed95575
-
 ### Registering a Class for Interface
-Code:
+
     interface ICrypt {
         public function crypt($password);
     }
@@ -39,20 +36,15 @@ Code:
     }
 
     $container = new Container();
-    $container->register('Crypt')->with('ICrypt');
+    $container
+        ->register('Crypt')
+        ->with('ICrypt');
 
     $crypt = $container->resolve('Crypt');
     $icrypt = $container->resolve('ICrypt');
 
-    echo $crypt->crypt('testing')
-        . ' = '
-        . $icrypt->crypt('testing');
-
-Output:
-    ae2b1fca515949e5d54fb22b8ed95575 = ae2b1fca515949e5d54fb22b8ed95575
-
 ### Registering a Class for Multiple Interfaces
-Code:
+
     interface ICrypt {
         public function crypt($password);
     }
@@ -72,10 +64,12 @@ Code:
     }
 
     $container = new Container();
-    $container->register('Crypt')->with(array('ICrypt', 'IPasswordResetter'));
+    $container
+        ->register('Crypt')
+        ->with(array('ICrypt', 'IPasswordResetter'));
 
 ### Registering a Class for All Implemented Interfaces
-Code:
+
     interface ICrypt {
         public function crypt($password);
     }
@@ -95,10 +89,12 @@ Code:
     }
 
     $container = new Container();
-    $container->register('Crypt')->withAllImplementedInterfaces();
+    $container
+        ->register('Crypt')
+        ->withAllImplementedInterfaces();
 
 ### Typed Dependencies Will Automatically be Resolved
-Code:
+
     interface IUserService {
         ...
     }
@@ -114,7 +110,10 @@ Code:
     }
 
     $container = new Container();
-    $container->register('UserService')->with('IUserService');
+    $container
+        ->register('UserService')
+        ->with('IUserService');
+
     $container->register('UserController');
 
     $container->resolve('UserController');
