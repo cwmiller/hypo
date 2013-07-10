@@ -44,7 +44,7 @@ class Container implements IContainer {
 	 *
 	 * $container
 	 * 	->register(Service::class)
-	 * 	->asType(IService::class)
+	 * 	->with(IService::class)
 	 *	->asSingleton()
 	 *
 	 * @param string $type Class name to register
@@ -92,9 +92,9 @@ class Container implements IContainer {
 	 * Resolve a registration by name.
 	 *
 	 * For example:
-	 * $container->register(Service::class)->asName('testing');
+	 * $container->register(Service::class)->asName('foo');
 	 *
-	 * $container->resolveByName('testing') => instance of Service
+	 * $container->resolveByName('foo') => instance of Service
 	 *
 	 * @param string $name
 	 * @return null|object
