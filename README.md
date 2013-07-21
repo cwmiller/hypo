@@ -1,13 +1,9 @@
 # Hypo
 
-Hypo is a Dependency Injection container for PHP 5.4+. It provides a simple, fluent API for configuration.
+Hypo is a Dependency Injection Container for PHP 5.4+. It provides a simple, fluent API for configuration. Currently, Hypo
+only supports Constructor Injection.
 
-## Features
--   Simple configuration via Fluent API
--   Constructor injection (setter injection possibly in the future)
--   Named dependencies
-
-##Examples
+## Examples
 
 ### Registering a Class
 
@@ -23,7 +19,7 @@ Hypo is a Dependency Injection container for PHP 5.4+. It provides a simple, flu
     $crypt = $container->resolve('Crypt');
     echo $crypt->crypt('testing');
 
-### Registering a Class for Interface
+### Registering a Class for an Interface
 
     interface ICrypt {
         public function crypt($password);
@@ -40,8 +36,7 @@ Hypo is a Dependency Injection container for PHP 5.4+. It provides a simple, flu
         ->register('Crypt')
         ->with('ICrypt');
 
-    $crypt = $container->resolve('Crypt');
-    $icrypt = $container->resolve('ICrypt');
+    $crypt = $container->resolve('ICrypt');
 
 ### Registering a Class for Multiple Interfaces
 
@@ -91,29 +86,89 @@ Hypo is a Dependency Injection container for PHP 5.4+. It provides a simple, flu
     $container = new Container();
     $container
         ->register('Crypt')
-        ->withAllImplementedInterfaces();
+        ->withImplementedInterfaces();
 
-### Typed Dependencies Will Automatically be Resolved
+### Configuring Arguments
 
-    interface IUserService {
-        ...
+Type hinted arguments are automatically resolved if they are classes or interfaces. This can be overridden by using
+the NamedDependency feature (see next section). Primitive arguments on the other hand have to be specified if they do not have a default value.
+
+    interface ICrypt {
+        public function crypt($password);
     }
 
-    class UserService implements IUserService {
-        ...
-    }
-
-    class UserController {
-        public function __construct(IUserService $userService) {
+    class BCrypt implements ICrypt {
+        public function BCrypt($workfactor) {
             ...
         }
     }
 
     $container = new Container();
     $container
+        ->register('BCrypt')
+        ->with('ICrypt')
+        ->withParameters(array(
+            'workfactor' => 10
+        ));
+
+### Naming Registrations
+
+When multiple classes are registered for the same implementation, they can each be given a unique name. This name can be used
+to resolve the class by using the `resolveName()` method.
+
+    interface ICrypt {
+        public function crypt($password);
+    }
+
+    class BCrypt implements ICrypt {
+        public function BCrypt($workfactor) {
+            ...
+        }
+    }
+
+    class MD5Crypt implements ICrypt {
+        ...
+    }
+
+    $container = new Container();
+    $container
+        ->register('BCrypt')
+        ->with('ICrypt')
+        ->withParameters(array(
+            'workfactor' => 10
+        ))
+        ->withName('bcrypt');
+
+    $container->resolveName('bcrypt');
+
+Also, the name can be used with the `NamedDependency` class when configuring parameters:
+
+    class UserService {
+        public function UserService(ICrypt $crypt) {
+            ...
+        }
+    }
+
+    $container
         ->register('UserService')
-        ->with('IUserService');
+        ->withParameters(array(
+            'crypt' => new NamedDependency('bcrypt')
+        ));
 
-    $container->register('UserController');
+### Lifespan
+Singletons can be se by using the `asSingleton()` method. `asTransient()` is also provided, but it is not required to
+execute it because all registrations are transient by default.
 
-    $container->resolve('UserController');
+    interface IUserRepo {
+        ...
+    }
+
+    class UserRepo implements IUserRepo {
+        ...
+    }
+
+    $container = new Container();
+    $container
+        ->register('UserRepo')
+        ->with('IUserRepo')
+        ->asSingleton();
