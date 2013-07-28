@@ -156,8 +156,8 @@ Also, the name can be used with the `NamedDependency` class when configuring par
         ));
 
 ### Lifespan
-Singletons can be se by using the `asSingleton()` method. `asTransient()` is also provided, but it is not required to
-execute it because all registrations are transient by default.
+Singletons can be set by using the `asSingleton()` method. `asTransient()` is also provided, but it is not required to
+specify because all registrations are transient by default.
 
     interface IUserRepo {
         ...
