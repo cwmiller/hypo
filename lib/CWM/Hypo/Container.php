@@ -60,7 +60,7 @@ class Container implements IContainer {
 		// Track the registration
 		$this->_registrations []= $registration;
 
-		// Continue the fluent API
+		// Continue to the next step in the fluent API
 		return new ResolutionStep($registration);
 	}
 
@@ -173,10 +173,10 @@ class Container implements IContainer {
 				}
 			}
 
-			// Constructor the implementation.
+			// Construct the implementation.
 			$instance = $clazz->newInstanceArgs($params_for_construction);
 
-			// If a singleton, store the instance. It'll be served to any further requests for this service.
+			// If a singleton, store the instance. It'll be served for any further requests of this service.
 			if ($registration->isSingleton()) {
 				$registration->setInstance($instance);
 			}

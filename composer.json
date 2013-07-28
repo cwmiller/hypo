@@ -1,8 +1,7 @@
 {
     "name": "cwm/hypo",
     "description": "Dependency Injection Container for PHP",
-    "minimum-stability": "dev",
-    "requires": {
+    "require": {
         "php": ">=5.4.0"
     },
     "license": "MIT",
