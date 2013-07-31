@@ -42,4 +42,17 @@ interface IContainer {
 	 * @return object|null
 	 */
 	public function resolve($service);
+
+	/**
+	 * @abstract
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function resolveByName($name);
+
+	/**
+	 * @param $service
+	 * @return array
+	 */
+	public function resolveAll($service);
 }

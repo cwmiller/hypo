@@ -35,7 +35,7 @@ class Container implements IContainer {
 	/**
 	 * @var Registration[] $_registrations
 	 */
-	private $_registrations;
+	private $_registrations = array();
 
 	/**
 	 * Begins the registration process for the given class name using fluent API.
@@ -58,7 +58,7 @@ class Container implements IContainer {
 		$registration->addImplementation($type);
 
 		// Track the registration
-		$this->_registrations []= $registration;
+		array_unshift($this->_registrations, $registration);
 
 		// Continue to the next step in the fluent API
 		return new ResolutionStep($registration);
@@ -66,6 +66,7 @@ class Container implements IContainer {
 
 	/**
 	 * Resolves a registered service class. Requesting a service that is not registered will return NULL.
+	 * If multiple registrations are present for the service, then the last one to be configured will be returned.
 	 *
 	 * @param string $service Class name to resolve
 	 * @return object|null
@@ -112,6 +113,29 @@ class Container implements IContainer {
 		}
 
 		return $instance;
+	}
+
+	/**
+	 * Resolves a registered service class. An instance is made for every registration found for the service class,
+	 * and all instances will be returned as an array.
+	 *
+	 * @param string $service
+	 * @return array
+	 */
+	public function resolveAll($service) {
+		$instances = array();
+
+		// Cycle all the configured registrations
+		foreach ($this->_registrations as $registration) {
+			$services = $registration->getServices();
+
+			// If a matching service was found, resolve it and add it to the list of instances to be returned
+			if (in_array($service, $services)) {
+				$instances []= $this->resolveRegistration($registration);
+			}
+		}
+
+		return $instances;
 	}
 
 	/**
