@@ -1,3 +1,3 @@
 <?php
 $autoloader = require __DIR__.'/../vendor/autoload.php';
-$autoloader->add('Hypo\Tests', __DIR__);
+$autoloader->add('CWM\Hypo\Tests', __DIR__);
