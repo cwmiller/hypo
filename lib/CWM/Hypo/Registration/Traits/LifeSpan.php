@@ -34,7 +34,7 @@ trait LifeSpan {
 	 * @return NameStep
 	 */
 	public function AsSingleton() {
-		$this->getRegistration()->isSingleton(true);
+		$this->getRegistration()->setIsSingleton(true);
 
 		return new NameStep($this->getRegistration());
 	}
@@ -43,7 +43,7 @@ trait LifeSpan {
 	 * @return NameStep
 	 */
 	public function AsTransient() {
-		$this->getRegistration()->isSingleton(false);
+		$this->getRegistration()->setIsSingleton(false);
 
 		return new NameStep($this->getRegistration());
 	}
