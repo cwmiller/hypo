@@ -98,7 +98,7 @@ the NamedDependency feature (see next section). Primitive arguments on the other
     }
 
     class BCrypt implements ICrypt {
-        public function BCrypt($workfactor) {
+        public function __construct($workfactor) {
             ...
         }
     }
@@ -121,7 +121,7 @@ to resolve the class by using the `resolveName()` method.
     }
 
     class BCrypt implements ICrypt {
-        public function BCrypt($workfactor) {
+        public function __construct($workfactor) {
             ...
         }
     }
@@ -144,7 +144,7 @@ to resolve the class by using the `resolveName()` method.
 Also, the name can be used with the `NamedDependency` class when configuring parameters:
 
     class UserService {
-        public function UserService(ICrypt $crypt) {
+        public function __construct(ICrypt $crypt) {
             ...
         }
     }
