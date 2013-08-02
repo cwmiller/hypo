@@ -28,6 +28,8 @@ use CWM\Hypo\Registration\RegistrationBase;
 use CWM\Hypo\Registration\ClassRegistration;
 use CWM\Hypo\Registration\InstanceRegistration;
 use CWM\Hypo\Registration\Classes\ResolutionStep;
+use CWM\Hypo\Registration\Instances\ResolutionStep as InstanceResolutionStep;
+use InvalidArgumentException;
 
 /**
  * Class Container
@@ -51,11 +53,11 @@ class Container implements IContainer {
 	 *
 	 * @param string $className Class name to register
 	 * @return ResolutionStep
-	 * @throws \InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function register($className) {
 		if (!is_string($className)) {
-			throw new \InvalidArgumentException('Class name must be a string.', 'className');
+			throw new InvalidArgumentException('Class name must be a string.', 'className');
 		}
 
 		// Start with a clean registration.
@@ -71,11 +73,23 @@ class Container implements IContainer {
 	/**
 	 * Registers a previously initialized object.
 	 *
-	 * @param $instance
-	 * @return null
+	 * @param object $instance
+	 * @return InstanceResolutionStep
+	 * @throws InvalidArgumentException
 	 */
 	public function registerInstance($instance) {
-		return null;
+		if (!is_object($instance)) {
+			throw new InvalidArgumentException('Instance must be an instance of an object.', 'instance');
+		}
+
+		// Start with a clean registration.
+		$registration = new InstanceRegistration($instance);
+
+		// Track the registration
+		array_unshift($this->_registrations, $registration);
+
+		// Continue to the next step in the fluent API
+		return new InstanceResolutionStep($registration);
 	}
 
 	/**
@@ -240,10 +254,13 @@ class Container implements IContainer {
 	}
 
 	/**
+	 * Resolves a InstanceRegistration object
+	 *
 	 * @param InstanceRegistration $registration
 	 * @return object
 	 */
 	protected function resolveInstanceRegistration(InstanceRegistration $registration) {
+		// Instance-based registrations simply return the implementation
 		return $registration->getImplementation();
 	}
 }

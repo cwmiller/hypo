@@ -21,46 +21,12 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo;
+namespace CWM\Hypo\Registration\Instances;
 
-use CWM\Hypo\Registration\Classes\ResolutionStep;
-use CWM\Hypo\Registration\Instances\ResolutionStep as InstanceResolutionStep;
+use CWM\Hypo\Registration\Step;
+use CWM\Hypo\Registration\Instances\Traits\Name;
+use CWM\Hypo\Registration\Instances\Traits\Resolution;
 
-/**
- * @package CWM\Hypo
- */
-interface IContainer {
-	/**
-	 * @abstract
-	 * @param string $className
-	 * @return ResolutionStep
-	 */
-	public function register($className);
-
-	/**
-	 * @abstract
-	 * @param object $instance
-	 * @return InstanceResolutionStep
-	 */
-	public function registerInstance($instance);
-
-	/**
-	 * @abstract
-	 * @param string $service
-	 * @return object|null
-	 */
-	public function resolve($service);
-
-	/**
-	 * @abstract
-	 * @param string $name
-	 * @return mixed
-	 */
-	public function resolveByName($name);
-
-	/**
-	 * @param $service
-	 * @return array
-	 */
-	public function resolveAll($service);
+class ResolutionStep extends Step {
+	use Resolution, Name;
 }

@@ -131,6 +131,38 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertInstanceOf('CWM\Hypo\Tests\Dummy', $instance->dummy);
 	}
+
+	public function testRegisterInstance() {
+		$container = new Container();
+		$value = 42345234223423;
+
+		$dummy = new Dummy();
+		$dummy->setValue($value);
+
+		$container->registerInstance($dummy);
+
+		$this->assertEquals($value, $container->resolve('CWM\Hypo\Tests\Dummy')->getValue());
+	}
+
+	/**
+	 * @expectedException \CWM\Hypo\Exceptions\RegistrationException
+	 */
+	public function testRegisterInstanceWithIncompatibleTypes() {
+		$container = new Container();
+
+		$dummy = new Dummy();
+
+		$container->registerInstance($dummy)->with('CWM\Hypo\Tests\INotDummy');
+	}
+
+	public function testResolveNameWithInstance() {
+		$container = new Container();
+		$container->register('CWM\Hypo\Tests\Dummy')->with('CWM\Hypo\Tests\IDummy')->withName('dummy');
+
+		$container->registerInstance(new DumDum())->withName('dumdum');
+
+		$this->assertInstanceOf('CWM\Hypo\Tests\DumDum', $container->resolveByName('dumdum'));
+	}
 }
 
 interface IDummy {

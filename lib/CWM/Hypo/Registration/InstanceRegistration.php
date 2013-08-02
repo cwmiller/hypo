@@ -38,7 +38,7 @@ class InstanceRegistration extends RegistrationBase {
 	 * @param object $implemenation
 	 */
 	public function __construct($implemenation) {
-		$this->_services = array();
+		$this->_services = array(get_class($implemenation));
 		$this->_implementation = $implemenation;
 	}
 
