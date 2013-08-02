@@ -21,23 +21,31 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration\Traits;
-
-use CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration;
 
 /**
- * @package CWM\Hypo\Registration\Traits
+ * Data model for a registration of a previously instantiated class.
+ *
+ * @package CWM\Hypo
  */
-trait Name {
+class InstanceRegistration extends RegistrationBase {
 	/**
-	 * @param string $name
+	 * @var object
 	 */
-	public function withName($name) {
-		$this->getRegistration()->setName($name);
+	protected $_implementation;
+
+	/**
+	 * @param object $implemenation
+	 */
+	public function __construct($implemenation) {
+		$this->_services = array();
+		$this->_implementation = $implemenation;
 	}
 
 	/**
-	 * @return Registration
+	 * @return object
 	 */
-	abstract protected function getRegistration();
+	public function getImplementation() {
+		return $this->_implementation;
+	}
 }

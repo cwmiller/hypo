@@ -23,16 +23,48 @@
 
 namespace CWM\Hypo\Registration;
 
-use CWM\Hypo\Registration\Traits\LifeSpan;
-use CWM\Hypo\Registration\Traits\Name;
-use CWM\Hypo\Registration\Traits\Parameters;
+abstract class RegistrationBase {
+	/**
+	 * @var array
+	 */
+	protected $_services = array();
 
-/**
- * Second step in the registration fluent API. This step follows resolution and is for configuring parameters
- * to be passed to the implemenation's constructor.
- *
- * @package CWM\Hypo\Registration
- */
-class ParameterStep extends Step {
-	use Parameters, LifeSpan, Name;
+	/**
+	 * @var string
+	 */
+	protected $_name = NULL;
+
+	/**
+	 * @param string $service
+	 * @return $this
+	 */
+	public function addService($service) {
+		$this->_services []= $service;
+
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getServices() {
+		return $this->_services;
+	}
+
+	/**
+	 * @param $name
+	 * @return $this
+	 */
+	public function setName($name) {
+		$this->_name = $name;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->_name;
+	}
 }

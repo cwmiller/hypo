@@ -3,7 +3,7 @@ namespace CWM\Hypo\Tests;
 
 use CWM\Hypo\Container;
 use CWM\Hypo\Exceptions\RegistrationException;
-use CWM\Hypo\Registration\NamedDependency;
+use CWM\Hypo\Registration\Classes\NamedDependency;
 
 class ContainerTest extends \PHPUnit_Framework_TestCase {
 	public function testResolve() {

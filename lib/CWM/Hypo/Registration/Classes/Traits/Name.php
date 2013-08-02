@@ -21,28 +21,23 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Classes\Traits;
+
+use CWM\Hypo\Registration\ClassRegistration;
 
 /**
- * @package CWM\Hypo\Registration
+ * @package CWM\Hypo\Registration\Traits
  */
-class NamedDependency {
-	/**
-	 * @var string $_name;
-	 */
-	private $_name;
-
+trait Name {
 	/**
 	 * @param string $name
 	 */
-	public function __construct($name) {
-		$this->_name = $name;
+	public function withName($name) {
+		$this->getRegistration()->setName($name);
 	}
 
 	/**
-	 * @return string
+	 * @return ClassRegistration
 	 */
-	public function getName() {
-		return $this->_name;
-	}
+	abstract protected function getRegistration();
 }

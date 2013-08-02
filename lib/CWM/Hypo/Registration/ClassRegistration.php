@@ -21,84 +21,49 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo;
+namespace CWM\Hypo\Registration;
 
 use \ReflectionClass;
 
 /**
- * Data model for a single registration's configuration.
+ * Data model for a single registration of a class.
  *
  * @package CWM\Hypo
  */
-class Registration {
-	/**
-	 * @var array
-	 */
-	private $_services = array();
-
-	/**
-	 * @var object|null
-	 */
-	private $_implementation;
-
+class ClassRegistration extends RegistrationBase {
 	/**
 	 * @var string
 	 */
-	private $_name = NULL;
+	protected $_implementation;
 
 	/**
 	 * @var bool
 	 */
-	private $_isSingleton = false;
+	protected $_isSingleton = false;
 
 	/**
 	 * @var array
 	 */
-	private $_parameters = array();
+	protected $_parameters = array();
 
 	/**
-	 * @var object
+	 * @var object|null
 	 */
-	private $_instance = NULL;
+	protected $_instance = NULL;
 
-	public function __construct() {
-		$this->_services = array();
-		$this->_implementation = NULL;
+	/**
+	 * @param string $implemenation
+	 */
+	public function __construct($implemenation) {
+		$this->_services = array($implemenation);
+		$this->_implementation = $implemenation;
 	}
 
 	/**
-	 * @param string $implementation
-	 * @return $this
-	 */
-	public function addImplementation($implementation) {
-		$this->_implementation = $implementation;
-		$this->_services []= $implementation;
-
-		return $this;
-	}
-
-	/**
-	 * @return null|object
+	 * @return string
 	 */
 	public function getImplementation() {
 		return $this->_implementation;
-	}
-
-	/**
-	 * @param string $service
-	 * @return $this
-	 */
-	public function addService($service) {
-		$this->_services []= $service;
-
-		return $this;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getServices() {
-		return $this->_services;
 	}
 
 	/**
@@ -130,23 +95,6 @@ class Registration {
 
 	public function isSingleton() {
 		return $this->_isSingleton;
-	}
-
-	/**
-	 * @param $name
-	 * @return $this
-	 */
-	public function setName($name) {
-		$this->_name = $name;
-
-		return $this;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->_name;
 	}
 
 	/**

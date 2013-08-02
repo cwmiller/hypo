@@ -21,20 +21,35 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Classes\Traits;
 
-use CWM\Hypo\Registration\Traits\LifeSpan;
-use CWM\Hypo\Registration\Traits\Resolution;
-use CWM\Hypo\Registration\Traits\Parameters;
-use CWM\Hypo\Registration\Traits\Name;
-use CWM\Hypo\Registration;
+use CWM\Hypo\Registration\Classes\NameStep;
+use CWM\Hypo\Registration\ClassRegistration;
 
 /**
- * First step in the fluent API is resolution. This step follows the registration of the implemenation and
- * has all paths available to it.
- *
- * @package CWM\Hypo\Registration
+ * @package CWM\Hypo\Registration\Classes\Traits
  */
-class ResolutionStep extends Step {
-	use LifeSpan, Resolution, Parameters, Name;
+trait LifeSpan {
+	/**
+	 * @return NameStep
+	 */
+	public function AsSingleton() {
+		$this->getRegistration()->setIsSingleton(true);
+
+		return new NameStep($this->getRegistration());
+	}
+
+	/**
+	 * @return NameStep
+	 */
+	public function AsTransient() {
+		$this->getRegistration()->setIsSingleton(false);
+
+		return new NameStep($this->getRegistration());
+	}
+
+	/**
+	 * @return ClassRegistration
+	 */
+	abstract protected function getRegistration();
 }

@@ -31,10 +31,17 @@ use CWM\Hypo\Registration\ResolutionStep;
 interface IContainer {
 	/**
 	 * @abstract
-	 * @param string $type
+	 * @param string $className
 	 * @return ResolutionStep
 	 */
-	public function register($type);
+	public function register($className);
+
+	/**
+	 * @abstract
+	 * @param $instance
+	 * @return ResolutionStep
+	 */
+	public function registerInstance($instance);
 
 	/**
 	 * @abstract

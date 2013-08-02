@@ -23,9 +23,11 @@
 
 namespace CWM\Hypo;
 
-use CWM\Hypo\Registration\NamedDependency;
-use CWM\Hypo\Registration;
-use CWM\Hypo\Registration\ResolutionStep;
+use CWM\Hypo\Registration\Classes\NamedDependency;
+use CWM\Hypo\Registration\RegistrationBase;
+use CWM\Hypo\Registration\ClassRegistration;
+use CWM\Hypo\Registration\InstanceRegistration;
+use CWM\Hypo\Registration\Classes\ResolutionStep;
 
 /**
  * Class Container
@@ -33,7 +35,7 @@ use CWM\Hypo\Registration\ResolutionStep;
  */
 class Container implements IContainer {
 	/**
-	 * @var Registration[] $_registrations
+	 * @var RegistrationBase[] $_registrations
 	 */
 	private $_registrations = array();
 
@@ -47,21 +49,33 @@ class Container implements IContainer {
 	 * 	->with(IService::class)
 	 *	->asSingleton()
 	 *
-	 * @param string $type Class name to register
+	 * @param string $className Class name to register
 	 * @return ResolutionStep
+	 * @throws \InvalidArgumentException
 	 */
-	public function register($type) {
-		// Start with a clean registration.
-		$registration = new Registration();
+	public function register($className) {
+		if (!is_string($className)) {
+			throw new \InvalidArgumentException('Class name must be a string.', 'className');
+		}
 
-		// Add the given class type as the implementation
-		$registration->addImplementation($type);
+		// Start with a clean registration.
+		$registration = new ClassRegistration($className);
 
 		// Track the registration
 		array_unshift($this->_registrations, $registration);
 
 		// Continue to the next step in the fluent API
 		return new ResolutionStep($registration);
+	}
+
+	/**
+	 * Registers a previously initialized object.
+	 *
+	 * @param $instance
+	 * @return null
+	 */
+	public function registerInstance($instance) {
+		return null;
 	}
 
 	/**
@@ -139,12 +153,28 @@ class Container implements IContainer {
 	}
 
 	/**
-	 * Resolves a Registration object
+	 * Resolves a RegistrationBase object
 	 *
-	 * @param Registration $registration
+	 * @param RegistrationBase $registration
+	 * @return null|object
+	 */
+	protected function resolveRegistration(RegistrationBase $registration) {
+		if ($registration instanceof ClassRegistration) {
+			return $this->resolveClassRegistration($registration);
+		} else if ($registration instanceof InstanceRegistration) {
+			return $this->resolveInstanceRegistration($registration);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Resolves a ClassRegistration object
+	 *
+	 * @param ClassRegistration $registration
 	 * @return object
 	 */
-	protected function resolveRegistration(Registration $registration) {
+	protected function resolveClassRegistration(ClassRegistration $registration) {
 		// Registrations hold instances of singletons, so check that first
 		if (!is_null($registration->getInstance())) {
 			return $registration->getInstance();
@@ -207,5 +237,13 @@ class Container implements IContainer {
 
 			return $instance;
 		}
+	}
+
+	/**
+	 * @param InstanceRegistration $registration
+	 * @return object
+	 */
+	protected function resolveInstanceRegistration(InstanceRegistration $registration) {
+		return $registration->getImplementation();
 	}
 }

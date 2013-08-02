@@ -21,27 +21,28 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration\Traits;
-
-use CWM\Hypo\Registration\LifeSpanStep;
-use CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Classes;
 
 /**
- * @package CWM\Hypo\Registration\Traits
+ * @package CWM\Hypo\Registration\Classes
  */
-trait Parameters {
+class NamedDependency {
 	/**
-	 * @param $parameters
-	 * @return LifeSpanStep
+	 * @var string $_name;
 	 */
-	public function withParameters($parameters) {
-		$this->getRegistration()->addParameters($parameters);
+	private $_name;
 
-		return new LifeSpanStep($this->getRegistration());
+	/**
+	 * @param string $name
+	 */
+	public function __construct($name) {
+		$this->_name = $name;
 	}
 
 	/**
-	 * @return Registration
+	 * @return string
 	 */
-	abstract protected function getRegistration();
+	public function getName() {
+		return $this->_name;
+	}
 }
