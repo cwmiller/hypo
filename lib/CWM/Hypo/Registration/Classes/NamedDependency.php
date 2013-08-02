@@ -21,32 +21,28 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
-
-use CWM\Hypo\Registration\RegistrationBase;
+namespace CWM\Hypo\Registration\Classes;
 
 /**
- * Base class for all steps in the fluent API.
- *
- * @package CWM\Hypo\Registration
+ * @package CWM\Hypo\Registration\Classes
  */
-abstract class Step {
+class NamedDependency {
 	/**
-	 * @var RegistrationBase $_registration;
+	 * @var string $_name;
 	 */
-	protected $_registration;
+	private $_name;
 
 	/**
-	 * @param RegistrationBase $registration
+	 * @param string $name
 	 */
-	public function __construct(RegistrationBase $registration) {
-		$this->_registration = $registration;
+	public function __construct($name) {
+		$this->_name = $name;
 	}
 
 	/**
-	 * @return RegistrationBase
+	 * @return string
 	 */
-	protected function getRegistration() {
-		return $this->_registration;
+	public function getName() {
+		return $this->_name;
 	}
 }

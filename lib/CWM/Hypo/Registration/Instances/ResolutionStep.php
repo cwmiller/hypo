@@ -21,28 +21,12 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Instances;
 
-/**
- * @package CWM\Hypo\Registration
- */
-class NamedDependency {
-	/**
-	 * @var string $_name;
-	 */
-	private $_name;
+use CWM\Hypo\Registration\Step;
+use CWM\Hypo\Registration\Instances\Traits\Name;
+use CWM\Hypo\Registration\Instances\Traits\Resolution;
 
-	/**
-	 * @param string $name
-	 */
-	public function __construct($name) {
-		$this->_name = $name;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName() {
-		return $this->_name;
-	}
+class ResolutionStep extends Step {
+	use Resolution, Name;
 }

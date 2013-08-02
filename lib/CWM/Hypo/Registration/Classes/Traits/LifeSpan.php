@@ -21,16 +21,35 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Classes\Traits;
 
-use CWM\Hypo\Registration\Traits\Name;
+use CWM\Hypo\Registration\Classes\NameStep;
+use CWM\Hypo\Registration\ClassRegistration;
 
 /**
- * Final step in the registration fluent API. This step follows the lifespan step is for configuring
- * an optional name for the registration.
- *
- * @package CWM\Hypo\Registration
+ * @package CWM\Hypo\Registration\Classes\Traits
  */
-class NameStep extends Step {
-	use Name;
+trait LifeSpan {
+	/**
+	 * @return NameStep
+	 */
+	public function AsSingleton() {
+		$this->getRegistration()->setIsSingleton(true);
+
+		return new NameStep($this->getRegistration());
+	}
+
+	/**
+	 * @return NameStep
+	 */
+	public function AsTransient() {
+		$this->getRegistration()->setIsSingleton(false);
+
+		return new NameStep($this->getRegistration());
+	}
+
+	/**
+	 * @return ClassRegistration
+	 */
+	abstract protected function getRegistration();
 }

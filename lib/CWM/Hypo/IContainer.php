@@ -23,7 +23,8 @@
 
 namespace CWM\Hypo;
 
-use CWM\Hypo\Registration\ResolutionStep;
+use CWM\Hypo\Registration\Classes\ResolutionStep;
+use CWM\Hypo\Registration\Instances\ResolutionStep as InstanceResolutionStep;
 
 /**
  * @package CWM\Hypo
@@ -31,10 +32,17 @@ use CWM\Hypo\Registration\ResolutionStep;
 interface IContainer {
 	/**
 	 * @abstract
-	 * @param string $type
+	 * @param string $className
 	 * @return ResolutionStep
 	 */
-	public function register($type);
+	public function register($className);
+
+	/**
+	 * @abstract
+	 * @param object $instance
+	 * @return InstanceResolutionStep
+	 */
+	public function registerInstance($instance);
 
 	/**
 	 * @abstract

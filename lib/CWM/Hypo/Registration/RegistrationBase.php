@@ -21,23 +21,50 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration\Traits;
+namespace CWM\Hypo\Registration;
 
-use CWM\Hypo\Registration;
-
-/**
- * @package CWM\Hypo\Registration\Traits
- */
-trait Name {
+abstract class RegistrationBase {
 	/**
-	 * @param string $name
+	 * @var array
 	 */
-	public function withName($name) {
-		$this->getRegistration()->setName($name);
+	protected $_services = array();
+
+	/**
+	 * @var string
+	 */
+	protected $_name = NULL;
+
+	/**
+	 * @param string $service
+	 * @return $this
+	 */
+	public function addService($service) {
+		$this->_services []= $service;
+
+		return $this;
 	}
 
 	/**
-	 * @return Registration
+	 * @return array
 	 */
-	abstract protected function getRegistration();
+	public function getServices() {
+		return $this->_services;
+	}
+
+	/**
+	 * @param $name
+	 * @return $this
+	 */
+	public function setName($name) {
+		$this->_name = $name;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->_name;
+	}
 }

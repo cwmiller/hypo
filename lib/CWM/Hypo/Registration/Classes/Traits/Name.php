@@ -21,18 +21,23 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Classes\Traits;
 
-use CWM\Hypo\Registration\Traits\LifeSpan;
-use CWM\Hypo\Registration\Traits\Name;
-use CWM\Hypo\Registration\Traits\Parameters;
+use CWM\Hypo\Registration\ClassRegistration;
 
 /**
- * Second step in the registration fluent API. This step follows resolution and is for configuring parameters
- * to be passed to the implemenation's constructor.
- *
- * @package CWM\Hypo\Registration
+ * @package CWM\Hypo\Registration\Traits
  */
-class ParameterStep extends Step {
-	use Parameters, LifeSpan, Name;
+trait Name {
+	/**
+	 * @param string $name
+	 */
+	public function withName($name) {
+		$this->getRegistration()->setName($name);
+	}
+
+	/**
+	 * @return ClassRegistration
+	 */
+	abstract protected function getRegistration();
 }

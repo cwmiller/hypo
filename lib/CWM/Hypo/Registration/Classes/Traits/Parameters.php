@@ -21,35 +21,27 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration\Traits;
+namespace CWM\Hypo\Registration\Classes\Traits;
 
-use CWM\Hypo\Registration\NameStep;
-use CWM\Hypo\Registration;
+use CWM\Hypo\Registration\ClassRegistration;
+use CWM\Hypo\Registration\Classes\LifeSpanStep;
 
 /**
- * @package CWM\Hypo\Registration\Traits
+ * @package CWM\Hypo\Registration\Classes\Traits
  */
-trait LifeSpan {
+trait Parameters {
 	/**
-	 * @return NameStep
+	 * @param $parameters
+	 * @return LifeSpanStep
 	 */
-	public function AsSingleton() {
-		$this->getRegistration()->setIsSingleton(true);
+	public function withParameters($parameters) {
+		$this->getRegistration()->addParameters($parameters);
 
-		return new NameStep($this->getRegistration());
+		return new LifeSpanStep($this->getRegistration());
 	}
 
 	/**
-	 * @return NameStep
-	 */
-	public function AsTransient() {
-		$this->getRegistration()->setIsSingleton(false);
-
-		return new NameStep($this->getRegistration());
-	}
-
-	/**
-	 * @return Registration
+	 * @return ClassRegistration
 	 */
 	abstract protected function getRegistration();
 }
