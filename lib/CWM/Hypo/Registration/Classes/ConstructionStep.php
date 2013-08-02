@@ -24,7 +24,7 @@
 namespace CWM\Hypo\Registration\Classes;
 
 use CWM\Hypo\Registration\Step;
-use CWM\Hypo\Registration\Classes\Traits\Parameters;
+use CWM\Hypo\Registration\Classes\Traits\Construction;
 use CWM\Hypo\Registration\Classes\Traits\LifeSpan;
 use CWM\Hypo\Registration\Classes\Traits\Name;
 
@@ -34,6 +34,6 @@ use CWM\Hypo\Registration\Classes\Traits\Name;
  *
  * @package CWM\Hypo\Registration\Classes
  */
-class ParameterStep extends Step {
-	use Parameters, LifeSpan, Name;
+class ConstructionStep extends Step {
+	use Construction, LifeSpan, Name;
 }

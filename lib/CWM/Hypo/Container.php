@@ -193,56 +193,23 @@ class Container implements IContainer {
 		if (!is_null($registration->getInstance())) {
 			return $registration->getInstance();
 		} else {
-			// Get the name of the class to be constructed
-			$className = $registration->getImplementation();
+			// Get the class name of the implementation to be constructed
+			$class_name = $registration->getImplementation();
 
-			// Get the named parameters to be passed to the constructor
-			$configured_params = $registration->getParameters();
+			$instance = null;
 
-			// Reflect the class to be constructed to get information on the constructor
-			$clazz = new \ReflectionClass($className);
-			$constructor = $clazz->getConstructor();
+			// If a callback was given for construction, call it
+			if (!is_null($registration->getConstructedBy())) {
+				$callback = $registration->getConstructedBy();
 
-			// Associative array for housing named parameters to be passed to the constructor
-			$params_for_construction = array();
+				$instance = $callback($class_name);
+			} else {
+				// Get the named parameters to be passed to the constructor
+				$parameters = $registration->getParameters();
 
-			if (!is_null($constructor)) {
-				if ($constructor->getNumberOfParameters() > 0) {
-					// Get details on each parameter in the constructor
-					$params = $constructor->getParameters();
-
-					foreach ($params as $param) {
-						$value = NULL;
-
-						// Check the parameter name against the configured parameter listing.
-						if (array_key_exists($param->getName(), $configured_params)) {
-							// The value can be anything, but if it's an instance of NamedDependency, then
-							// the value must be resolved using the container.
-							$value = $configured_params[$param->getName()];
-
-							if ($value instanceof NamedDependency) {
-								$value = $this->resolveByName($value->getName());
-							}
-						} else {
-							// If the parameter is not explicitly configured, but is a class, then it will be resolved
-							// using the container.
-							$param_clazz = $param->getClass();
-
-							if (!is_null($param_clazz)) {
-								$param_instance = $this->resolve($param_clazz->getName());
-								if (!is_null($param_instance)) {
-									$value = $param_instance;
-								}
-							}
-						}
-
-						$params_for_construction[$param->getName()] = $value;
-					}
-				}
+				// Construct implementation
+				$instance = $this->constructImplementation($class_name, $parameters);
 			}
-
-			// Construct the implementation.
-			$instance = $clazz->newInstanceArgs($params_for_construction);
 
 			// If a singleton, store the instance. It'll be served for any further requests of this service.
 			if ($registration->isSingleton()) {
@@ -251,6 +218,60 @@ class Container implements IContainer {
 
 			return $instance;
 		}
+	}
+
+	/**
+	 * Constructs the given class by passing the given parameters to the constructor
+	 *
+	 * @param $className
+	 * @param $parameters
+	 * @return object
+	 */
+	protected function constructImplementation($className, $parameters = array()) {
+		// Reflect the class to be constructed to get information on the constructor
+		$clazz = new \ReflectionClass($className);
+		$constructor = $clazz->getConstructor();
+
+		// Associative array for housing named parameters to be passed to the constructor
+		$params_for_construction = array();
+
+		if (!is_null($constructor)) {
+			if ($constructor->getNumberOfParameters() > 0) {
+				// Get details on each parameter in the constructor
+				$parameters_on_constructor = $constructor->getParameters();
+
+				foreach ($parameters_on_constructor as $param) {
+					$value = NULL;
+
+					// Check the parameter name against the configured parameter listing.
+					if (array_key_exists($param->getName(), $parameters)) {
+						// The value can be anything, but if it's an instance of NamedDependency, then
+						// the value must be resolved using the container.
+						$value = $parameters[$param->getName()];
+
+						if ($value instanceof NamedDependency) {
+							$value = $this->resolveByName($value->getName());
+						}
+					} else {
+						// If the parameter is not explicitly configured, but is a class, then it will be resolved
+						// using the container.
+						$param_clazz = $param->getClass();
+
+						if (!is_null($param_clazz)) {
+							$param_instance = $this->resolve($param_clazz->getName());
+							if (!is_null($param_instance)) {
+								$value = $param_instance;
+							}
+						}
+					}
+
+					$params_for_construction[$param->getName()] = $value;
+				}
+			}
+		}
+
+		// Construct the implementation and pass it back
+		return $clazz->newInstanceArgs($params_for_construction);
 	}
 
 	/**

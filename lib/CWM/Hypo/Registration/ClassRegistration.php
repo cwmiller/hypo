@@ -23,7 +23,7 @@
 
 namespace CWM\Hypo\Registration;
 
-use \ReflectionClass;
+use Closure;
 
 /**
  * Data model for a single registration of a class.
@@ -52,6 +52,11 @@ class ClassRegistration extends RegistrationBase {
 	protected $_instance = NULL;
 
 	/**
+	 * @var Closure|null
+	 */
+	protected $_constructedBy = NULL;
+
+	/**
 	 * @param string $implemenation
 	 */
 	public function __construct($implemenation) {
@@ -70,7 +75,7 @@ class ClassRegistration extends RegistrationBase {
 	 * @param $parameters
 	 * @return $this
 	 */
-	public function addParameters($parameters) {
+	public function setParameters($parameters) {
 		$this->_parameters = $parameters;
 
 		return $this;
@@ -81,6 +86,23 @@ class ClassRegistration extends RegistrationBase {
 	 */
 	public function getParameters() {
 		return $this->_parameters;
+	}
+
+	/**
+	 * @param callable $closure
+	 * @return $this
+	 */
+	public function setConstructedBy(Closure $closure) {
+		$this->_constructedBy = $closure;
+
+		return $this;
+	}
+
+	/**
+	 * @return callable|null
+	 */
+	public function getConstructedBy() {
+		return $this->_constructedBy;
 	}
 
 	/**

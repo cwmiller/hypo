@@ -24,7 +24,7 @@
 namespace CWM\Hypo\Registration\Classes\Traits;
 
 use CWM\Hypo\Registration\Classes\LifeSpanStep;
-use CWM\Hypo\Registration\Classes\ParameterStep;
+use CWM\Hypo\Registration\Classes\ConstructionStep;
 use CWM\Hypo\Registration\ClassRegistration;
 use CWM\Hypo\Exceptions\RegistrationException;
 use \ReflectionClass;
@@ -49,7 +49,7 @@ trait Resolution {
 			}
 		}
 
-		return new ParameterStep($registration);
+		return new ConstructionStep($registration);
 	}
 
 	/**
@@ -86,7 +86,7 @@ trait Resolution {
 			$registration->addService($service);
 		}
 
-		return new ParameterStep($registration);
+		return new ConstructionStep($registration);
 	}
 
 	/**

@@ -25,17 +25,33 @@ namespace CWM\Hypo\Registration\Classes\Traits;
 
 use CWM\Hypo\Registration\ClassRegistration;
 use CWM\Hypo\Registration\Classes\LifeSpanStep;
+use Closure;
 
 /**
  * @package CWM\Hypo\Registration\Classes\Traits
  */
-trait Parameters {
+trait Construction {
 	/**
+	 * Sets arguments to be passed to the implementation's constructor
+	 *
 	 * @param $parameters
 	 * @return LifeSpanStep
 	 */
 	public function withParameters($parameters) {
-		$this->getRegistration()->addParameters($parameters);
+		$this->getRegistration()->setParameters($parameters);
+
+		return new LifeSpanStep($this->getRegistration());
+	}
+
+	/**
+	 * Sets a custom callback that is responsible for constructing the implementation.
+	 * The callback will receive one argument: the name of the service being resolved.
+	 *
+	 * @param callable $closure
+	 * @return LifeSpanStep
+	 */
+	public function constructedBy(Closure $closure) {
+		$this->getRegistration()->setConstructedBy($closure);
 
 		return new LifeSpanStep($this->getRegistration());
 	}

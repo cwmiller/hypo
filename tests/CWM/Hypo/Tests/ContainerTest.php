@@ -163,6 +163,21 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertInstanceOf('CWM\Hypo\Tests\DumDum', $container->resolveByName('dumdum'));
 	}
+
+	public function testResolveWithCallback() {
+		$container = new Container();
+		$value = 53474534534;
+
+		$container->register('CWM\Hypo\Tests\Dummy')->constructedBy(function($className) use ($value) {
+			$dummy = new $className();
+			$dummy->setValue($value);
+
+			return $dummy;
+		});
+
+		$this->assertInstanceOf('CWM\Hypo\Tests\Dummy', $container->resolve('CWM\Hypo\Tests\Dummy'));
+		$this->assertEquals($value, $container->resolve('CWM\Hypo\Tests\Dummy')->getValue());
+	}
 }
 
 interface IDummy {
