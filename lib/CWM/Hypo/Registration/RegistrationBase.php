@@ -23,14 +23,48 @@
 
 namespace CWM\Hypo\Registration;
 
-use CWM\Hypo\Registration\Traits\Name;
+abstract class RegistrationBase {
+	/**
+	 * @var array
+	 */
+	protected $_services = array();
 
-/**
- * Final step in the registration fluent API. This step follows the lifespan step is for configuring
- * an optional name for the registration.
- *
- * @package CWM\Hypo\Registration
- */
-class NameStep extends Step {
-	use Name;
+	/**
+	 * @var string
+	 */
+	protected $_name = NULL;
+
+	/**
+	 * @param string $service
+	 * @return $this
+	 */
+	public function addService($service) {
+		$this->_services []= $service;
+
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getServices() {
+		return $this->_services;
+	}
+
+	/**
+	 * @param $name
+	 * @return $this
+	 */
+	public function setName($name) {
+		$this->_name = $name;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName() {
+		return $this->_name;
+	}
 }

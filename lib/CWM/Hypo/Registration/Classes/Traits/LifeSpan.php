@@ -21,13 +21,13 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration\Traits;
+namespace CWM\Hypo\Registration\Classes\Traits;
 
-use CWM\Hypo\Registration\NameStep;
-use CWM\Hypo\Registration;
+use CWM\Hypo\Registration\Classes\NameStep;
+use CWM\Hypo\Registration\ClassRegistration;
 
 /**
- * @package CWM\Hypo\Registration\Traits
+ * @package CWM\Hypo\Registration\Classes\Traits
  */
 trait LifeSpan {
 	/**
@@ -49,7 +49,7 @@ trait LifeSpan {
 	}
 
 	/**
-	 * @return Registration
+	 * @return ClassRegistration
 	 */
 	abstract protected function getRegistration();
 }

@@ -23,9 +23,13 @@
 
 namespace CWM\Hypo;
 
-use CWM\Hypo\Registration\NamedDependency;
-use CWM\Hypo\Registration;
-use CWM\Hypo\Registration\ResolutionStep;
+use CWM\Hypo\Registration\Classes\NamedDependency;
+use CWM\Hypo\Registration\RegistrationBase;
+use CWM\Hypo\Registration\ClassRegistration;
+use CWM\Hypo\Registration\InstanceRegistration;
+use CWM\Hypo\Registration\Classes\ResolutionStep;
+use CWM\Hypo\Registration\Instances\ResolutionStep as InstanceResolutionStep;
+use InvalidArgumentException;
 
 /**
  * Class Container
@@ -33,7 +37,7 @@ use CWM\Hypo\Registration\ResolutionStep;
  */
 class Container implements IContainer {
 	/**
-	 * @var Registration[] $_registrations
+	 * @var RegistrationBase[] $_registrations
 	 */
 	private $_registrations = array();
 
@@ -47,21 +51,45 @@ class Container implements IContainer {
 	 * 	->with(IService::class)
 	 *	->asSingleton()
 	 *
-	 * @param string $type Class name to register
+	 * @param string $className Class name to register
 	 * @return ResolutionStep
+	 * @throws InvalidArgumentException
 	 */
-	public function register($type) {
-		// Start with a clean registration.
-		$registration = new Registration();
+	public function register($className) {
+		if (!is_string($className)) {
+			throw new InvalidArgumentException('Class name must be a string.', 'className');
+		}
 
-		// Add the given class type as the implementation
-		$registration->addImplementation($type);
+		// Start with a clean registration.
+		$registration = new ClassRegistration($className);
 
 		// Track the registration
 		array_unshift($this->_registrations, $registration);
 
 		// Continue to the next step in the fluent API
 		return new ResolutionStep($registration);
+	}
+
+	/**
+	 * Registers a previously initialized object.
+	 *
+	 * @param object $instance
+	 * @return InstanceResolutionStep
+	 * @throws InvalidArgumentException
+	 */
+	public function registerInstance($instance) {
+		if (!is_object($instance)) {
+			throw new InvalidArgumentException('Instance must be an instance of an object.', 'instance');
+		}
+
+		// Start with a clean registration.
+		$registration = new InstanceRegistration($instance);
+
+		// Track the registration
+		array_unshift($this->_registrations, $registration);
+
+		// Continue to the next step in the fluent API
+		return new InstanceResolutionStep($registration);
 	}
 
 	/**
@@ -139,66 +167,49 @@ class Container implements IContainer {
 	}
 
 	/**
-	 * Resolves a Registration object
+	 * Resolves a RegistrationBase object
 	 *
-	 * @param Registration $registration
+	 * @param RegistrationBase $registration
+	 * @return null|object
+	 */
+	protected function resolveRegistration(RegistrationBase $registration) {
+		if ($registration instanceof ClassRegistration) {
+			return $this->resolveClassRegistration($registration);
+		} else if ($registration instanceof InstanceRegistration) {
+			return $this->resolveInstanceRegistration($registration);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Resolves a ClassRegistration object
+	 *
+	 * @param ClassRegistration $registration
 	 * @return object
 	 */
-	protected function resolveRegistration(Registration $registration) {
+	protected function resolveClassRegistration(ClassRegistration $registration) {
 		// Registrations hold instances of singletons, so check that first
 		if (!is_null($registration->getInstance())) {
 			return $registration->getInstance();
 		} else {
-			// Get the name of the class to be constructed
-			$className = $registration->getImplementation();
+			// Get the class name of the implementation to be constructed
+			$class_name = $registration->getImplementation();
 
-			// Get the named parameters to be passed to the constructor
-			$configured_params = $registration->getParameters();
+			$instance = null;
 
-			// Reflect the class to be constructed to get information on the constructor
-			$clazz = new \ReflectionClass($className);
-			$constructor = $clazz->getConstructor();
+			// If a callback was given for construction, call it
+			if (!is_null($registration->getConstructedBy())) {
+				$callback = $registration->getConstructedBy();
 
-			// Associative array for housing named parameters to be passed to the constructor
-			$params_for_construction = array();
+				$instance = $callback($class_name);
+			} else {
+				// Get the named parameters to be passed to the constructor
+				$parameters = $registration->getParameters();
 
-			if (!is_null($constructor)) {
-				if ($constructor->getNumberOfParameters() > 0) {
-					// Get details on each parameter in the constructor
-					$params = $constructor->getParameters();
-
-					foreach ($params as $param) {
-						$value = NULL;
-
-						// Check the parameter name against the configured parameter listing.
-						if (array_key_exists($param->getName(), $configured_params)) {
-							// The value can be anything, but if it's an instance of NamedDependency, then
-							// the value must be resolved using the container.
-							$value = $configured_params[$param->getName()];
-
-							if ($value instanceof NamedDependency) {
-								$value = $this->resolveByName($value->getName());
-							}
-						} else {
-							// If the parameter is not explicitly configured, but is a class, then it will be resolved
-							// using the container.
-							$param_clazz = $param->getClass();
-
-							if (!is_null($param_clazz)) {
-								$param_instance = $this->resolve($param_clazz->getName());
-								if (!is_null($param_instance)) {
-									$value = $param_instance;
-								}
-							}
-						}
-
-						$params_for_construction[$param->getName()] = $value;
-					}
-				}
+				// Construct implementation
+				$instance = $this->constructImplementation($class_name, $parameters);
 			}
-
-			// Construct the implementation.
-			$instance = $clazz->newInstanceArgs($params_for_construction);
 
 			// If a singleton, store the instance. It'll be served for any further requests of this service.
 			if ($registration->isSingleton()) {
@@ -207,5 +218,70 @@ class Container implements IContainer {
 
 			return $instance;
 		}
+	}
+
+	/**
+	 * Constructs the given class by passing the given parameters to the constructor
+	 *
+	 * @param $className
+	 * @param $parameters
+	 * @return object
+	 */
+	protected function constructImplementation($className, $parameters = array()) {
+		// Reflect the class to be constructed to get information on the constructor
+		$clazz = new \ReflectionClass($className);
+		$constructor = $clazz->getConstructor();
+
+		// Associative array for housing named parameters to be passed to the constructor
+		$params_for_construction = array();
+
+		if (!is_null($constructor)) {
+			if ($constructor->getNumberOfParameters() > 0) {
+				// Get details on each parameter in the constructor
+				$parameters_on_constructor = $constructor->getParameters();
+
+				foreach ($parameters_on_constructor as $param) {
+					$value = NULL;
+
+					// Check the parameter name against the configured parameter listing.
+					if (array_key_exists($param->getName(), $parameters)) {
+						// The value can be anything, but if it's an instance of NamedDependency, then
+						// the value must be resolved using the container.
+						$value = $parameters[$param->getName()];
+
+						if ($value instanceof NamedDependency) {
+							$value = $this->resolveByName($value->getName());
+						}
+					} else {
+						// If the parameter is not explicitly configured, but is a class, then it will be resolved
+						// using the container.
+						$param_clazz = $param->getClass();
+
+						if (!is_null($param_clazz)) {
+							$param_instance = $this->resolve($param_clazz->getName());
+							if (!is_null($param_instance)) {
+								$value = $param_instance;
+							}
+						}
+					}
+
+					$params_for_construction[$param->getName()] = $value;
+				}
+			}
+		}
+
+		// Construct the implementation and pass it back
+		return $clazz->newInstanceArgs($params_for_construction);
+	}
+
+	/**
+	 * Resolves a InstanceRegistration object
+	 *
+	 * @param InstanceRegistration $registration
+	 * @return object
+	 */
+	protected function resolveInstanceRegistration(InstanceRegistration $registration) {
+		// Instance-based registrations simply return the implementation
+		return $registration->getImplementation();
 	}
 }

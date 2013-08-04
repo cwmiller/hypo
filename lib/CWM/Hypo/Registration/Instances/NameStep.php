@@ -21,16 +21,11 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Instances;
 
-use CWM\Hypo\Registration\Traits\LifeSpan;
-use CWM\Hypo\Registration\Traits\Name;
+use CWM\Hypo\Registration\Step;
+use CWM\Hypo\Registration\Instances\Traits\Name;
 
-/**
- * Third step in the registration fluent API. This step follows the parameters step and is for configuring
- * the lifespan of the implemenation.
- * @package CWM\Hypo\Registration
- */
-class LifeSpanStep extends Step {
-	use LifeSpan, Name;
+class NameStep extends Step {
+	use Name;
 }

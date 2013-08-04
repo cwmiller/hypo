@@ -21,28 +21,43 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Classes\Traits;
+
+use CWM\Hypo\Registration\ClassRegistration;
+use CWM\Hypo\Registration\Classes\LifeSpanStep;
+use Closure;
 
 /**
- * @package CWM\Hypo\Registration
+ * @package CWM\Hypo\Registration\Classes\Traits
  */
-class NamedDependency {
+trait Construction {
 	/**
-	 * @var string $_name;
+	 * Sets arguments to be passed to the implementation's constructor
+	 *
+	 * @param $parameters
+	 * @return LifeSpanStep
 	 */
-	private $_name;
+	public function withParameters($parameters) {
+		$this->getRegistration()->setParameters($parameters);
 
-	/**
-	 * @param string $name
-	 */
-	public function __construct($name) {
-		$this->_name = $name;
+		return new LifeSpanStep($this->getRegistration());
 	}
 
 	/**
-	 * @return string
+	 * Sets a custom callback that is responsible for constructing the implementation.
+	 * The callback will receive one argument: the name of the service being resolved.
+	 *
+	 * @param callable $closure
+	 * @return LifeSpanStep
 	 */
-	public function getName() {
-		return $this->_name;
+	public function constructedBy(Closure $closure) {
+		$this->getRegistration()->setConstructedBy($closure);
+
+		return new LifeSpanStep($this->getRegistration());
 	}
+
+	/**
+	 * @return ClassRegistration
+	 */
+	abstract protected function getRegistration();
 }

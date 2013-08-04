@@ -21,20 +21,19 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Classes;
 
-use CWM\Hypo\Registration\Traits\LifeSpan;
-use CWM\Hypo\Registration\Traits\Resolution;
-use CWM\Hypo\Registration\Traits\Parameters;
-use CWM\Hypo\Registration\Traits\Name;
-use CWM\Hypo\Registration;
+use CWM\Hypo\Registration\Step;
+use CWM\Hypo\Registration\Classes\Traits\Construction;
+use CWM\Hypo\Registration\Classes\Traits\LifeSpan;
+use CWM\Hypo\Registration\Classes\Traits\Name;
 
 /**
- * First step in the fluent API is resolution. This step follows the registration of the implemenation and
- * has all paths available to it.
+ * Second step in the registration fluent API. This step follows resolution and is for configuring parameters
+ * to be passed to the implemenation's constructor.
  *
- * @package CWM\Hypo\Registration
+ * @package CWM\Hypo\Registration\Classes
  */
-class ResolutionStep extends Step {
-	use LifeSpan, Resolution, Parameters, Name;
+class ConstructionStep extends Step {
+	use Construction, LifeSpan, Name;
 }

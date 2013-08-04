@@ -23,30 +23,29 @@
 
 namespace CWM\Hypo\Registration;
 
-use CWM\Hypo\Registration\RegistrationBase;
-
 /**
- * Base class for all steps in the fluent API.
+ * Data model for a registration of a previously instantiated class.
  *
- * @package CWM\Hypo\Registration
+ * @package CWM\Hypo
  */
-abstract class Step {
+class InstanceRegistration extends RegistrationBase {
 	/**
-	 * @var RegistrationBase $_registration;
+	 * @var object
 	 */
-	protected $_registration;
+	protected $_implementation;
 
 	/**
-	 * @param RegistrationBase $registration
+	 * @param object $implemenation
 	 */
-	public function __construct(RegistrationBase $registration) {
-		$this->_registration = $registration;
+	public function __construct($implemenation) {
+		$this->_services = array(get_class($implemenation));
+		$this->_implementation = $implemenation;
 	}
 
 	/**
-	 * @return RegistrationBase
+	 * @return object
 	 */
-	protected function getRegistration() {
-		return $this->_registration;
+	public function getImplementation() {
+		return $this->_implementation;
 	}
 }

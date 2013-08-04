@@ -21,9 +21,9 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration\Traits;
+namespace CWM\Hypo\Registration\Classes\Traits;
 
-use CWM\Hypo\Registration;
+use CWM\Hypo\Registration\ClassRegistration;
 
 /**
  * @package CWM\Hypo\Registration\Traits
@@ -37,7 +37,7 @@ trait Name {
 	}
 
 	/**
-	 * @return Registration
+	 * @return ClassRegistration
 	 */
 	abstract protected function getRegistration();
 }

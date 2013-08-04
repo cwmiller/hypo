@@ -21,18 +21,12 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Instances;
 
-use CWM\Hypo\Registration\Traits\LifeSpan;
-use CWM\Hypo\Registration\Traits\Name;
-use CWM\Hypo\Registration\Traits\Parameters;
+use CWM\Hypo\Registration\Step;
+use CWM\Hypo\Registration\Instances\Traits\Name;
+use CWM\Hypo\Registration\Instances\Traits\Resolution;
 
-/**
- * Second step in the registration fluent API. This step follows resolution and is for configuring parameters
- * to be passed to the implemenation's constructor.
- *
- * @package CWM\Hypo\Registration
- */
-class ParameterStep extends Step {
-	use Parameters, LifeSpan, Name;
+class ResolutionStep extends Step {
+	use Resolution, Name;
 }

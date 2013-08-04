@@ -21,16 +21,16 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration\Traits;
+namespace CWM\Hypo\Registration\Classes\Traits;
 
-use CWM\Hypo\Registration\ParameterStep;
-use CWM\Hypo\Registration\LifeSpanStep;
-use CWM\Hypo\Registration;
+use CWM\Hypo\Registration\Classes\LifeSpanStep;
+use CWM\Hypo\Registration\Classes\ConstructionStep;
+use CWM\Hypo\Registration\ClassRegistration;
 use CWM\Hypo\Exceptions\RegistrationException;
 use \ReflectionClass;
 
 /**
- * @package CWM\Hypo\Registration\Traits
+ * @package CWM\Hypo\Registration\Classes\Traits
  */
 trait Resolution {
 	/**
@@ -49,7 +49,7 @@ trait Resolution {
 			}
 		}
 
-		return new ParameterStep($registration);
+		return new ConstructionStep($registration);
 	}
 
 	/**
@@ -86,11 +86,11 @@ trait Resolution {
 			$registration->addService($service);
 		}
 
-		return new ParameterStep($registration);
+		return new ConstructionStep($registration);
 	}
 
 	/**
-	 * @return Registration
+	 * @return ClassRegistration
 	 */
 	abstract protected function getRegistration();
 }

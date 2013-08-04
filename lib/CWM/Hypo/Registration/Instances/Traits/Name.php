@@ -21,32 +21,23 @@
  * THE SOFTWARE.
  */
 
-namespace CWM\Hypo\Registration;
+namespace CWM\Hypo\Registration\Instances\Traits;
 
-use CWM\Hypo\Registration\RegistrationBase;
+use CWM\Hypo\Registration\InstanceRegistration;
 
 /**
- * Base class for all steps in the fluent API.
- *
- * @package CWM\Hypo\Registration
+ * @package CWM\Hypo\Registration\Traits
  */
-abstract class Step {
+trait Name {
 	/**
-	 * @var RegistrationBase $_registration;
+	 * @param string $name
 	 */
-	protected $_registration;
-
-	/**
-	 * @param RegistrationBase $registration
-	 */
-	public function __construct(RegistrationBase $registration) {
-		$this->_registration = $registration;
+	public function withName($name) {
+		$this->getRegistration()->setName($name);
 	}
 
 	/**
-	 * @return RegistrationBase
+	 * @return InstanceRegistration
 	 */
-	protected function getRegistration() {
-		return $this->_registration;
-	}
+	abstract protected function getRegistration();
 }

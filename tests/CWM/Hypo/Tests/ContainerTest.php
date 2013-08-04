@@ -3,7 +3,7 @@ namespace CWM\Hypo\Tests;
 
 use CWM\Hypo\Container;
 use CWM\Hypo\Exceptions\RegistrationException;
-use CWM\Hypo\Registration\NamedDependency;
+use CWM\Hypo\Registration\Classes\NamedDependency;
 
 class ContainerTest extends \PHPUnit_Framework_TestCase {
 	public function testResolve() {
@@ -130,6 +130,53 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
 		$instance = $container->resolve('CWM\Hypo\Tests\DependsOnIDummy');
 
 		$this->assertInstanceOf('CWM\Hypo\Tests\Dummy', $instance->dummy);
+	}
+
+	public function testRegisterInstance() {
+		$container = new Container();
+		$value = 42345234223423;
+
+		$dummy = new Dummy();
+		$dummy->setValue($value);
+
+		$container->registerInstance($dummy);
+
+		$this->assertEquals($value, $container->resolve('CWM\Hypo\Tests\Dummy')->getValue());
+	}
+
+	/**
+	 * @expectedException \CWM\Hypo\Exceptions\RegistrationException
+	 */
+	public function testRegisterInstanceWithIncompatibleTypes() {
+		$container = new Container();
+
+		$dummy = new Dummy();
+
+		$container->registerInstance($dummy)->with('CWM\Hypo\Tests\INotDummy');
+	}
+
+	public function testResolveNameWithInstance() {
+		$container = new Container();
+		$container->register('CWM\Hypo\Tests\Dummy')->with('CWM\Hypo\Tests\IDummy')->withName('dummy');
+
+		$container->registerInstance(new DumDum())->withName('dumdum');
+
+		$this->assertInstanceOf('CWM\Hypo\Tests\DumDum', $container->resolveByName('dumdum'));
+	}
+
+	public function testResolveWithCallback() {
+		$container = new Container();
+		$value = 53474534534;
+
+		$container->register('CWM\Hypo\Tests\Dummy')->constructedBy(function($className) use ($value) {
+			$dummy = new $className();
+			$dummy->setValue($value);
+
+			return $dummy;
+		});
+
+		$this->assertInstanceOf('CWM\Hypo\Tests\Dummy', $container->resolve('CWM\Hypo\Tests\Dummy'));
+		$this->assertEquals($value, $container->resolve('CWM\Hypo\Tests\Dummy')->getValue());
 	}
 }
 
