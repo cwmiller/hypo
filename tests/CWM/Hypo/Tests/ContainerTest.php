@@ -64,7 +64,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
 
 	public function testResolveWithSingleton() {
 		$container = new Container();
-		$container->register('CWM\Hypo\Tests\Dummy')->AsSingleton();
+		$container->register('CWM\Hypo\Tests\Dummy')->asSingleton();
 
 		$dummy1 = $container->resolve('CWM\Hypo\Tests\Dummy');
 		$dummy2 = $container->resolve('CWM\Hypo\Tests\Dummy');
