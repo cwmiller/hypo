@@ -1,3 +1,6 @@
+1.2.1
+* Fixed camel casing on LifeSpan configuration methods.
+
 1.2.0
 * Added registerInstance() method to Container.
 * Added constructedBy() method to configuration API.
