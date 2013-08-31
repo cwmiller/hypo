@@ -9,7 +9,7 @@ Hypo can easily be added to your project via [Composer](http://getcomposer.org/)
 
 ```javascript
 "require": {
-    "cwm/hypo": "1.2.0"
+    "cwm/hypo": "1.2.1"
 },
 ```
 
