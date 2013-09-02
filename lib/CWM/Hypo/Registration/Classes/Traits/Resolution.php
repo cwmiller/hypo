@@ -34,7 +34,7 @@ use \ReflectionClass;
  */
 trait Resolution {
 	/**
-	 * @return LifeSpanStep
+	 * @return ConstructionStep
 	 */
 	public function withImplementedInterfaces() {
 		$registration = $this->getRegistration();
@@ -54,7 +54,7 @@ trait Resolution {
 
 	/**
 	 * @param array|string $services
-	 * @return LifeSpanStep
+	 * @return ConstructionStep
 	 * @throws RegistrationException
 	 */
 	public function with($services) {
