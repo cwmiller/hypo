@@ -1,3 +1,6 @@
+1.2.2
+* Fixed incorrect @return in PHPDoc on Resolution configuration methods.
+
 1.2.1
 * Fixed camel casing on LifeSpan configuration methods.
 
