@@ -1,3 +1,7 @@
+1.3.0
+* Attempting to resolve a service using resolve(), resolveByName(), or resolveAll() when the service is not registered with the container will now throw a NotRegisteredException instead of returning NULL.
+* Fixed RegistrationException not storing the registration the exception was raised for.
+
 1.2.2
 * Fixed incorrect @return in PHPDoc on Resolution configuration methods.
 
