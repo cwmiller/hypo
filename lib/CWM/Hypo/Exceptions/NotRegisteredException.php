@@ -23,32 +23,28 @@
 
 namespace CWM\Hypo\Exceptions;
 
-use CWM\Hypo\Registration\RegistrationBase;
 use \Exception;
 
 /**
  * @package CWM\Hypo\Exceptions
  */
-class RegistrationException extends Exception {
-	/** @var RegistrationBase $_registration */
-	protected $_registration;
+class NotRegisteredException extends Exception {
+    /** @var string $_service */
+    protected $_service;
 
-	/**
-	 * @param RegistrationBase $registration
-	 * @param int $message
-	 * @param int $code
-	 * @param $previous
-	 */
-	public function __construct(RegistrationBase $registration, $message, $code = 0, $previous = null) {
-        $this->_registration = $registration;
+    /**
+     * @param string $service
+     * @param int $message
+     * @param int $code
+     * @param $previous
+     */
+    public function __construct($service, $message, $code = 0, $previous = null) {
+        $this->_service = $service;
 
-		parent::__construct($message, $code, $previous);
-	}
+        parent::__construct($message, $code, $previous);
+    }
 
-	/**
-	 * @return RegistrationBase
-	 */
-	public function getRegistration() {
-		return $this->_registration;
-	}
+    public function getService() {
+        return $this->_service;
+    }
 }
