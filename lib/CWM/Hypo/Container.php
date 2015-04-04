@@ -29,6 +29,7 @@ use CWM\Hypo\Registration\ClassRegistration;
 use CWM\Hypo\Registration\InstanceRegistration;
 use CWM\Hypo\Registration\Classes\ResolutionStep;
 use CWM\Hypo\Registration\Instances\ResolutionStep as InstanceResolutionStep;
+use CWM\Hypo\Exceptions\NotRegisteredException;
 use InvalidArgumentException;
 
 /**
@@ -93,28 +94,24 @@ class Container implements IContainer {
 	}
 
 	/**
-	 * Resolves a registered service class. Requesting a service that is not registered will return NULL.
+	 * Resolves a registered service class. Requesting a service that is not registered will throw a NotRegisteredException.
 	 * If multiple registrations are present for the service, then the last one to be configured will be returned.
 	 *
 	 * @param string $service Class name to resolve
-	 * @return object|null
+	 * @return object
+     * @throws NotRegisteredException
 	 */
 	public function resolve($service) {
-		$instance = NULL;
+        $registrations = array_values(
+            array_filter($this->_registrations, function(RegistrationBase $registration) use ($service) {
+                return in_array($service, $registration->getServices());
+            }));
 
-		// Cycle all the configured registrations
-		foreach ($this->_registrations as $registration) {
-			$services = $registration->getServices();
+        if (count($registrations) == 0) {
+            throw new NotRegisteredException($service, $service . ' not registered with container.');
+        }
 
-			// If the requested service is found, return an instance of the configured implementation.
-			if (in_array($service, $services)) {
-				$instance = $this->resolveRegistration($registration);
-				// Prevent any further searching
-				break;
-			}
-		}
-
-		return $instance;
+        return $this->resolveRegistration($registrations[0]);
 	}
 
 	/**
@@ -126,21 +123,20 @@ class Container implements IContainer {
 	 * $container->resolveByName('foo') => instance of Service
 	 *
 	 * @param string $name
-	 * @return null|object
+	 * @return object
+     * @throws NotRegisteredException
 	 */
 	public function resolveByName($name) {
-		$instance = NULL;
+        $registrations = array_values(
+            array_filter($this->_registrations, function(RegistrationBase $registration) use ($name) {
+                return $registration->getName() == $name;
+            }));
 
-		// Search all registrations for one that matches $name
-		foreach ($this->_registrations as $registration) {
-			if ($registration->getName() == $name) {
-				$instance = $this->resolveRegistration($registration);
-				// Prevent any further searching
-				break;
-			}
-		}
+        if (count($registrations) == 0) {
+            throw new NotRegisteredException($name, 'Name "' . $name . '"" not registered with container.');
+        }
 
-		return $instance;
+        return $this->resolveRegistration($registrations[0]);
 	}
 
 	/**
@@ -149,21 +145,21 @@ class Container implements IContainer {
 	 *
 	 * @param string $service
 	 * @return array
+     * @throws NotRegisteredException
 	 */
 	public function resolveAll($service) {
-		$instances = array();
+        $registrations = array_values(
+            array_filter($this->_registrations, function(RegistrationBase $registration) use ($service) {
+                return in_array($service, $registration->getServices());
+            }));
 
-		// Cycle all the configured registrations
-		foreach ($this->_registrations as $registration) {
-			$services = $registration->getServices();
+        if (count($registrations) == 0) {
+            throw new NotRegisteredException($service, $service . ' not registered with container.');
+        }
 
-			// If a matching service was found, resolve it and add it to the list of instances to be returned
-			if (in_array($service, $services)) {
-				$instances []= $this->resolveRegistration($registration);
-			}
-		}
-
-		return $instances;
+        return array_map(function(RegistrationBase $registration) {
+            return $this->resolveRegistration($registration);
+        }, $registrations);
 	}
 
 	/**

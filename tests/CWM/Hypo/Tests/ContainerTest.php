@@ -13,10 +13,13 @@ class ContainerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('CWM\Hypo\Tests\Dummy', $container->resolve('CWM\Hypo\Tests\Dummy'));
 	}
 
-	public function testResolveWithNull() {
+    /**
+     * @expectedException \CWM\Hypo\Exceptions\NotRegisteredException
+     */
+	public function testUnregisteredResolve() {
 		$container = new Container();
 
-		$this->assertNull($container->resolve('CWM\Hypo\Tests\Dummy'));
+		$container->resolve('CWM\Hypo\Tests\Dummy');
 	}
 
 	public function testResolveWithInterface() {
