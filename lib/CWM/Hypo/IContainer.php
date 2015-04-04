@@ -25,6 +25,7 @@ namespace CWM\Hypo;
 
 use CWM\Hypo\Registration\Classes\ResolutionStep;
 use CWM\Hypo\Registration\Instances\ResolutionStep as InstanceResolutionStep;
+use CWM\Hypo\Exceptions\NotRegisteredException;
 
 /**
  * @package CWM\Hypo
@@ -47,20 +48,24 @@ interface IContainer {
 	/**
 	 * @abstract
 	 * @param string $service
-	 * @return object|null
+	 * @return object
+     * @throws NotRegisteredException
 	 */
 	public function resolve($service);
 
 	/**
 	 * @abstract
 	 * @param string $name
-	 * @return mixed
+	 * @return object
+     * @throws NotRegisteredException
 	 */
 	public function resolveByName($name);
 
 	/**
-	 * @param $service
+     * @abstract
+	 * @param string $service
 	 * @return array
+     * @throws NotRegisteredException
 	 */
 	public function resolveAll($service);
 }
