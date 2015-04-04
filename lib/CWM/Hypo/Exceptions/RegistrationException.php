@@ -40,6 +40,8 @@ class RegistrationException extends Exception {
 	 * @param $previous
 	 */
 	public function __construct(RegistrationBase $registration, $message, $code = 0, $previous = null) {
+        $this->_registration = $registration;
+
 		parent::__construct($message, $code, $previous);
 	}
 
